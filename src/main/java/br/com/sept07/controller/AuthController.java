@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.sept07.domain.form.LoginForm;
+import br.com.sept07.dto.TokenDto;
 import br.com.sept07.security.TokenService;
 
 @RestController
@@ -25,7 +26,7 @@ public class AuthController {
 	private TokenService tokenService;
 	
 	@PostMapping
-	public ResponseEntity<?> authentication(@RequestBody LoginForm loginForm ) {
+	public ResponseEntity<TokenDto> authentication(@RequestBody LoginForm loginForm ) {
 		System.out.println(loginForm.getLogin());
 		UsernamePasswordAuthenticationToken dadosLogin = loginForm.converter();
 		System.out.println(dadosLogin.getCredentials());
@@ -33,7 +34,7 @@ public class AuthController {
 			Authentication authenticate = authManager.authenticate(dadosLogin);
 			String token = tokenService.gerarToken(authenticate);
 			System.out.println(token);
-			return ResponseEntity.ok().build();
+			return ResponseEntity.ok(new TokenDto(token, "Bearer"));
 		} catch (AuthenticationException e) {
 			return ResponseEntity.badRequest().build();
 		}
